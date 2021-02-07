@@ -1,5 +1,4 @@
 import XCTest
-import LLScreenLock
 
 class Tests: XCTestCase {
     
