@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '9.0'
+
+target 'LLScreenLock_Example' do
+  pod 'LLScreenLock', :path => '../'
+
+  target 'LLScreenLock_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
