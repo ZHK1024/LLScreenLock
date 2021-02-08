@@ -11,15 +11,19 @@ import LLScreenLock
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var tableView: UITableView!
+    
+    private let titles: [String] = [
+        "手势解锁", "手势新建", "手势重置"
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        let vc = LLScreenLockViewController()
-        addChild(vc)
-        view.addSubview(vc.view)
-        
         LLScreenLock.repeatable = true
+        
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -27,4 +31,36 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+}
+
+extension ViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        titles.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel?.text = titles[indexPath.row]
+        return cell
+    }
+    
+}
+
+extension ViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        switch indexPath.row {
+        case 0:
+            LLScreenLock.lock(types: [.gesture(.unlock)])
+        case 1:
+            LLScreenLock.lock(types: [.gesture(.new)])
+        case 2:
+            LLScreenLock.lock(types: [.gesture(.reset)])
+        default:
+            break
+        }
+    }
 }
