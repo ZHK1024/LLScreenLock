@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private let titles: [String] = [
-        "手势解锁", "手势新建", "手势重置"
+        "手势解锁", "手势新建", "手势重置", "关闭手势锁"
     ]
     
     override func viewDidLoad() {
@@ -51,7 +51,10 @@ extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+        guard LLScreenLock.gestureLockIsOpen || indexPath.row == 1 else {
+            print("gestureLockIsOpen: false")
+            return
+        }
         switch indexPath.row {
         case 0:
             LLScreenLock.lock(types: [.gesture(.unlock)])
@@ -59,6 +62,8 @@ extension ViewController: UITableViewDelegate {
             LLScreenLock.lock(types: [.gesture(.new)])
         case 2:
             LLScreenLock.lock(types: [.gesture(.reset)])
+        case 3:
+            LLScreenLock.lock(types: [.gesture(.close)])
         default:
             break
         }

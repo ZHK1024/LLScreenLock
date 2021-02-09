@@ -32,7 +32,9 @@ public class LLScreenLockViewController: UIViewController {
         // Do any additional setup after loading the view.
         setupUI()
     }
-
+    deinit {
+        print(#function)
+    }
     // MARK: UI
     
     func setupUI() {
@@ -41,10 +43,10 @@ public class LLScreenLockViewController: UIViewController {
     }
     
     private func dismiss() {
-        UIView.animate(withDuration: 1.0) { [weak self] in
-            self?.windowHolder?.alpha = 0.0
-        } completion: { [weak self] (finished) in
-            self?.windowHolder = nil
+        UIView.animate(withDuration: 0.1, delay: 1.0, options: .curveLinear) {
+            self.windowHolder?.alpha = 0.0
+        } completion: { (finished) in
+            self.windowHolder = nil
         }
     }
     
@@ -54,7 +56,7 @@ public class LLScreenLockViewController: UIViewController {
     }
 
     lazy var stepQueue: LLGestureLock.OperationStepQueue = {
-        guard let operation = types.first(where: { $0 != .biolog }) else {
+        guard let operation = types.first(where: { $0 != .biometrics }) else {
             return unlockQueue
         }
         switch operation {
@@ -63,6 +65,7 @@ public class LLScreenLockViewController: UIViewController {
             case .new: return newSetQueue
             case .unlock: return unlockQueue
             case .reset: return resetQueue
+            case .close: return closeQueue
             }
         default:
             return unlockQueue
@@ -109,6 +112,29 @@ extension LLScreenLockViewController {
         return queue
     }
     
+    /// 解锁操作队列
+    private var closeQueue: LLGestureLock.OperationStepQueue {
+        let queue = LLGestureLock.OperationStepQueue(complete: { [weak self] (finished, indexs) in
+            if finished {
+                self?.gestureLockView.status = .success
+                LLScreenLock.gestureLockVerify.close()
+                self?.dismiss()
+            } else {
+                self?.gestureLockView.status = .failed
+                self?.resetStepQueue(queue: self?.unlockQueue)
+            }
+        })
+        queue.queue.append(LLGestureLock.StepOperation(operate: { (indexs) in
+            if LLScreenLock.gestureLockVerify.verify(path: indexs) {
+                return .complete
+            } else {
+                return .failed
+            }
+        }))
+        return queue
+    }
+    
+    /// 新建队列
     private var newSetQueue: LLGestureLock.OperationStepQueue {
         let queue = LLGestureLock.OperationStepQueue(complete: { [weak self] (finished, indexs) in
             if finished {
@@ -117,7 +143,7 @@ extension LLScreenLockViewController {
                 LLScreenLock.gestureLockVerify.change(path: indexs)
             } else {
                 self?.gestureLockView.status = .failed
-                self?.resetStepQueue(queue: self?.resetQueue)
+                self?.resetStepQueue(queue: self?.newSetQueue)
             }
         })
         
@@ -125,7 +151,7 @@ extension LLScreenLockViewController {
         var firstIndexs: [Int]? = nil
         queue.queue.append(LLGestureLock.StepOperation(operate: { [weak self] (indexs) -> LLGestureLock.OperationResult in
             firstIndexs = indexs
-            self?.gestureLockView.status = .success
+            self?.gestureLockView.status = .working
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self?.gestureLockView.status = .normal
                 self?.gestureLockView.resetPath()
@@ -174,7 +200,7 @@ extension LLScreenLockViewController {
         var firstIndexs: [Int]? = nil
         queue.queue.append(LLGestureLock.StepOperation(operate: { [weak self] (indexs) -> LLGestureLock.OperationResult in
             firstIndexs = indexs
-            self?.gestureLockView.status = .success
+            self?.gestureLockView.status = .working
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self?.gestureLockView.status = .normal
                 self?.gestureLockView.resetPath()

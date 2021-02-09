@@ -12,11 +12,9 @@ import UIKit
 
 protocol LLGestureLockViewDelegate: LLGestureLockActionViewDelegate {
     
-//    func <#name#>(<#parameters#>) -> <#return type#>
-    
 }
 
-class LLGestureLockView: UIView {
+class LLGestureLockView: LLBaseLockView {
     
     /// 委托代理对象
     public weak var delegate: LLGestureLockViewDelegate? {

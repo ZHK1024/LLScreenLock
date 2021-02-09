@@ -72,5 +72,6 @@ extension LLGestureLock {
         case unlock
         case reset
         case new
+        case close
     }
 }
