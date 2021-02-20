@@ -22,6 +22,12 @@ public class LLScreenLock {
     
     // MARK: UI
     
+    /// 标题字体颜色
+    public static var titleColor: UIColor = .rgb(0x343C60)
+    
+    /// 提示语字体颜色
+    public static var tipsColor: UIColor = .rgb(0x343C60)
+    
     /// 背景颜色
     public static var backgroundColor: UIColor = .white
     
@@ -61,17 +67,28 @@ public class LLScreenLock {
 
 extension LLScreenLock {
     
-    public enum LockType: Equatable {
-        case biometrics
-        case gesture(LLGestureLock.OperationType)
+    public typealias Action = LLGestureLock.OperationType
+    
+    public enum `Type` {
+        case gesture    // 手势密码 (只能二选一的情况, 最优先)
+        case biometrics // 生物认证
+        case all        // 全部
     }
     
-    /// 锁屏
-    /// - Parameter types: 验证类型
-    public static func lock(types: [LockType]) {
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = LLScreenLockViewController(types, window: window)
-        window.makeKeyAndVisible()
+    /// 调起锁屏/解锁
+    /// - Parameters:
+    ///   - type: 手势锁类型
+    ///   - biometrics: 是否使用生物认证 (TouchID/FaceID)
+    ///   - target: UINavigationController 对象, 传入不为 nil 时候, 通过 push 展示
+    public static func lock(_ action: Action, type: Type, target: UINavigationController? = nil) {
+        if target != nil {
+            let lockViewController = LLScreenLockViewController(action, type: type, window: nil)
+            target?.pushViewController(lockViewController, animated: true)
+        } else {
+            let window = UIWindow(frame: UIScreen.main.bounds)
+            window.rootViewController = LLNavigationController(rootViewController: LLScreenLockViewController(action, type: type, window: window))
+            window.makeKeyAndVisible()
+        }
     }
 }
 
@@ -101,6 +118,15 @@ extension LLScreenLock {
             case .failed: return StatusColors(pt: LLScreenLock.failedPTColor,
                                               bk: LLScreenLock.failedBKColor,
                                               lc: LLScreenLock.failedPTColor)
+            }
+        }
+        
+        var name: String {
+            switch self {
+            case .normal: return ""
+            case .working: return ""
+            case .success: return ""
+            case .failed: return ""
             }
         }
     }

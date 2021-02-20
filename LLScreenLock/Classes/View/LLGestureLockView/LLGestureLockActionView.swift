@@ -10,7 +10,13 @@ import UIKit
 
 protocol LLGestureLockActionViewDelegate: class {
     
+    /// 绘制完成回调
+    /// - Parameter indexs: 绘制完成的路径索引
     func drawPathFinished(path indexs: [Int])
+    
+    /// 路径发生改变时候回调
+    /// - Parameter indexs: 当前路径索引
+    func drawPathChanged(path indexs:[Int])
 }
 
 class LLGestureLockActionView: UIView {
@@ -26,6 +32,9 @@ class LLGestureLockActionView: UIView {
             lineLayer.strokeColor = status.statusColors.lc.cgColor
         }
     }
+    
+    /// 绘制区域边距
+    public var contentInsets: UIEdgeInsets = .zero
     
     /// 纵向排列视图
     private let stackView: UIStackView = {
@@ -76,17 +85,32 @@ class LLGestureLockActionView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+
         lineLayer.frame = bounds
         
-        let size = CGFloat.minimum(bounds.width, bounds.height)
-        stackView.frame = CGRect(x: 0.0, y: 0.0, width: size, height: size)
+        let size = CGFloat.minimum(bounds.width - contentInsets.left - contentInsets.right,
+                                   bounds.height - contentInsets.top - contentInsets.bottom)
+        stackView.frame = CGRect(x: contentInsets.left,
+                                 y: contentInsets.top,
+                                 width: size,
+                                 height: size)
         stackView.center = CGPoint(x: bounds.midX, y: bounds.midY)
         
         let row = (LLScreenLock.order - 1)
         guard row > 0 else { return }
         stackView.spacing = size * 0.375 / CGFloat(row)
         
-        // 刷新 item 的位置信息
+        /// 异步, 刷新 item 的位置信息
+        /// 同步刷新会造成计算结果出错, 在布局计算完成之后再做刷新
+        DispatchQueue.main.async {
+            self.initItemsInfo()
+        }
+    }
+    
+    override func safeAreaInsetsDidChange() {
+        if #available(iOS 11.0, *) {
+            super.safeAreaInsetsDidChange()
+        }
         initItemsInfo()
     }
     
@@ -97,7 +121,7 @@ class LLGestureLockActionView: UIView {
         case .began:
             initVerifyData()
         case .changed:
-            let locaton =  pan.location(in: self)
+            let locaton = pan.location(in: self)
             findSelectedItem(location: locaton)
             drawPathLine(location: locaton)
         case .cancelled, .ended, .failed:
@@ -150,6 +174,8 @@ class LLGestureLockActionView: UIView {
         } else {
             selectedItems.append(unselectedItems.remove(at: index))
         }
+        /// 路径发生变化, 回调代理方法
+        delegate?.drawPathChanged(path: selectedItems.map(\.item.index))
     }
     
     /// 绘制选中的路径
@@ -164,7 +190,6 @@ class LLGestureLockActionView: UIView {
         if let endPoint = location {
             path.addLine(to: endPoint)
         }
-        
         lineLayer.path = path.cgPath
     }
     

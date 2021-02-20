@@ -21,9 +21,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        LLScreenLock.repeatable = true
-        
-        
+        LLScreenLock.repeatable = false
+//        Workflow()
+//            .draw {
+//                print($0)
+//            }
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -57,13 +60,13 @@ extension ViewController: UITableViewDelegate {
         }
         switch indexPath.row {
         case 0:
-            LLScreenLock.lock(types: [.gesture(.unlock)])
+            LLScreenLock.lock(.unlock, type: .biometrics)
         case 1:
-            LLScreenLock.lock(types: [.gesture(.new)])
+            LLScreenLock.lock(.new, type: .all, target: navigationController)
         case 2:
-            LLScreenLock.lock(types: [.gesture(.reset)])
+            LLScreenLock.lock(.reset, type: .all, target: navigationController)
         case 3:
-            LLScreenLock.lock(types: [.gesture(.close)])
+            LLScreenLock.lock(.close, type: .all, target: navigationController)
         default:
             break
         }
