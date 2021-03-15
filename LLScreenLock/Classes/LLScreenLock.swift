@@ -63,6 +63,9 @@ public class LLScreenLock {
     
     /// 手势锁是否开启
     public static var gestureLockIsOpen: Bool { gestureLockVerify.isOpen }
+    
+    /// 生物认证是否开启
+    public static var biometricsLockIsOpen: Bool { LLBiometricsLockVerify.isOpen }
 }
 
 extension LLScreenLock {
@@ -89,6 +92,12 @@ extension LLScreenLock {
             window.rootViewController = LLNavigationController(rootViewController: LLScreenLockViewController(action, type: type, window: window))
             window.makeKeyAndVisible()
         }
+    }
+    
+    /// 重置所有锁屏锁
+    public static func resetAllScreenLock() {
+        gestureLockVerify.close()
+        LLBiometricsLockVerify.isOpen = false
     }
 }
 

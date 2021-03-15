@@ -12,6 +12,19 @@ struct LLBiometricsLockVerify {
     
     typealias Complete = (Bool, String?) -> Void
     
+    /// 是生物识别认证否开启字段名
+    private static let kBiometricsLockOpenKey = "651F1BBD2F04FAFF"
+    
+    /// 验证是否开启
+    public static var isOpen: Bool {
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: kBiometricsLockOpenKey)
+        }
+        get {
+            UserDefaults.standard.value(forKey: kBiometricsLockOpenKey) as? Bool ?? false
+        }
+    }
+    
     /// 进行生物认证
     /// - Parameter block: 结果
     static public func verify(complete: @escaping Complete) -> LABiometryType {

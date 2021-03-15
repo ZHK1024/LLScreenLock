@@ -62,11 +62,11 @@ extension ViewController: UITableViewDelegate {
         case 0:
             LLScreenLock.lock(.unlock, type: .biometrics)
         case 1:
-            LLScreenLock.lock(.new, type: .all, target: navigationController)
+            LLScreenLock.lock(.new, type: .biometrics, target: navigationController)
         case 2:
             LLScreenLock.lock(.reset, type: .all, target: navigationController)
         case 3:
-            LLScreenLock.lock(.close, type: .all, target: navigationController)
+            LLScreenLock.lock(.close, type: .biometrics, target: navigationController)
         default:
             break
         }

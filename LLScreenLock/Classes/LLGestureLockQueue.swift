@@ -116,11 +116,3 @@ public class Workflow {
         case complete(() -> Void)
     }
 }
-
-//typealias Complete = (String) -> Void
-//
-//enum Operation {
-//    case verify((String) -> Void)
-//
-//    case complete
-//}

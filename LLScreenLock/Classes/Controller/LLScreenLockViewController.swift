@@ -48,6 +48,8 @@ public class LLScreenLockViewController: UIViewController {
     
     ///  生物认证视图
     private lazy var biometricsLockView = LLBiometricsLockView(self)
+    
+    // MARK: Life
 
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -157,6 +159,13 @@ extension LLScreenLockViewController: LLBiometricsLockViewDelegate {
         let type = LLBiometricsLockVerify.verify { [weak self] (success, message) in
             if success {
                 self?.dismiss(0.0)
+                switch self?.action {
+                case .new:
+                    LLBiometricsLockVerify.isOpen = true
+                case .close:
+                    LLBiometricsLockVerify.isOpen = false
+                default: break
+                }
             }
         }
         switch type {
