@@ -22,10 +22,6 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         LLScreenLock.repeatable = false
-//        Workflow()
-//            .draw {
-//                print($0)
-//            }
 
     }
     
@@ -60,13 +56,13 @@ extension ViewController: UITableViewDelegate {
         }
         switch indexPath.row {
         case 0:
-            LLScreenLock.lock(.unlock, type: .biometrics)
+            LLScreenLock.lock(.unlock, type: .gesture)
         case 1:
-            LLScreenLock.lock(.new, type: .biometrics, target: navigationController)
+            LLScreenLock.lock(.new, type: .gesture, target: navigationController)
         case 2:
             LLScreenLock.lock(.reset, type: .all, target: navigationController)
         case 3:
-            LLScreenLock.lock(.close, type: .biometrics, target: navigationController)
+            LLScreenLock.lock(.close, type: .gesture, target: navigationController)
         default:
             break
         }
