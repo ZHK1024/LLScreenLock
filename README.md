@@ -21,7 +21,7 @@ pod 'LLScreenLock', :git => 'https://github.com/ZHK1024/LLScreenLock.git', :tag 
 
 ## Author
 
-ZHK1024, ZHK1024@qq.com
+ZHK1024, ZHK1024@foxmail.com
 
 ## License
 

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'LLScreenLock'
-  s.version          = '0.1.1'
+  s.version          = '0.2.0'
   s.summary          = 'A short description of LLScreenLock.'
 
 # This description is used to generate tags and improve search results.
@@ -24,7 +24,7 @@ TODO: Add long description of the pod here.
   s.homepage         = 'https://github.com/ZHK1024/LLScreenLock'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'ZHK1024' => 'ZHK1024@qq.com' }
+  s.author           = { 'ZHK1024' => 'ZHK1024@foxmail.com' }
   s.source           = { :git => 'https://github.com/ZHK1024/LLScreenLock.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
@@ -50,5 +50,6 @@ TODO: Add long description of the pod here.
   
 #   s.frameworks = 'CommonCrypto'
    
-  # s.dependency 'AFNetworking', '~> 2.3'
+  s.dependency 'PromiseKit/CorePromise', '>= 6.13.1'
+  
 end
